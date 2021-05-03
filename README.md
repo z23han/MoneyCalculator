@@ -1,1 +1,1 @@
-# MoneyCalculator for some monthly withdraw I'm interested
+# MoneyCalculator for withdrawing my money monthly
