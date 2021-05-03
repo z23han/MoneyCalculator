@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <title>Money Calculator</title>
+</head>
+
+<script>
+
+function userSubmit(e) {
+
+    e.preventDefault();
+
+    var balance = $('#balance').val();
+    var months = $('#months').val();
+    var rate = $('#rate').val();
+    var deposit = $("#deposit").val();
+
+    if (balance <= 0) {
+        alert("Please enter correct balance");
+        return false;
+    }
+    if (months <= 0) {
+        alert("Please enter correct month");
+        return false;
+    }
+    if (rate <= 0 || rate > 100) {
+        alert("Please enter correct rate");
+        return false;
+    }
+    if (deposit <= 0) {
+        alert("Please enter correct deposit");
+        return false;
+    }
+
+    var userInput = {
+        balance: balance, 
+        months: months, 
+        rate: rate, 
+        deposit: deposit
+    };
+
+    $.ajax({
+        type: "POST", 
+        url: '/calculate', 
+        cache: false, 
+        async: true, 
+        contentType: "application/json", 
+        data: JSON.stringify(userInput), 
+        success: function(data, status) {
+            if (data.success) {
+                var text = "每月提款" + (Math.round(data.result*100)/100).toString() + "元";
+                $('#result').html(text);
+                $('#result').css('color', 'red');
+            }
+        },
+        error: function(xhr, textStatus, errorThrown) {
+            alert(xhr.responseText);
+            console.log('Error!  Status = ' + xhr.status);
+        }
+    });
+}
+
+
+</script>
+
+
+<body>
+    <h2>计算器</h2>
+    <p>请输入以下值，以便我们计算出您每个月可以提取的金额</p>
+    <form id="userForm" action="/calculate" method="POST">
+        <label for="balance">本金</label>
+        <input type="number" id="balance" name="balance" step="0.01" min="0"><br>
+        <label for="months">年限（月数）</label>
+        <input type="number" name="months" id="months" min="0"><br>
+        <label for="rate">利率</label>
+        <input type="number" name="rate" id="rate" step="0.01" min="0" max="100"> %<br>
+        <label for="deposit">每年存入金额</label>
+        <input type="number" name="deposit" id="deposit" step="0.01" min="0"><br><br>
+        <input type="button" value="提交" onclick="userSubmit(event)" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="button" value="刷新" onclick="window.location.reload();">
+    </form>
+    <br><br>
+    <div id="result"></div>
+</body>
+</html>
