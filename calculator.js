@@ -13,12 +13,12 @@ module.exports = {
 
             var total = balance;
             
-            for (var i = 1; i <= months; ++i) {
-                total = (1 + rate / 100) * total;
-
+            for (var i = 0; i < months; ++i) {
                 if (i % 12 == 0) {
                     total += deposit;
                 }
+
+                total = (1 + rate / 100) * total;
             }
 
             var withdraw = 0
